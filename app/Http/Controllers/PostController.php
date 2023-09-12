@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth')->except('index', 'show');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +27,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', Post::class);
+
+        return view('posts.create');
     }
 
     /**
@@ -30,7 +37,16 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('create', Post::class);
+
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['required', 'string'],
+        ]);
+
+        $post = Post::create([...$data, 'user_id' => $request->user()->id]);
+
+        return to_route('posts.show', $post);
     }
 
     /**
@@ -49,7 +65,11 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        $this->authorize('update', $post);
+
+        return view('posts.edit', [
+            'post' => $post,
+        ]);
     }
 
     /**
@@ -57,7 +77,16 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $this->authorize('update', $post);
+
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['required', 'string'],
+        ]);
+
+        $post->update($data);
+
+        return to_route('posts.show', $post);
     }
 
     /**
@@ -65,6 +94,10 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $this->authorize('delete', $post);
+
+        $post->delete();
+
+        return to_route('posts.index');
     }
 }

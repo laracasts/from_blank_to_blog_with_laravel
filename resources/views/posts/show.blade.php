@@ -2,9 +2,13 @@
     <div class="max-w-5xl mx-auto px-2 py-6">
         <div>
             <h1 class="text-3xl font-semibold">{{ $post->title }}</h1>
-            <span class="text-sm text-gray-600">
+            <span class="text-sm text-gray-600 block">
                 {{ $post->created_at->diffForHumans() }} by {{ $post->user->name }}
             </span>
+
+            @can('update', $post)
+                <a href="{{ route('posts.edit', $post) }}" class="block mt-2 text-blue-400 font-semibold hover:text-blue-600">Edit</a>
+            @endcan
         </div>
 
         <div class="prose mt-6">
@@ -49,5 +53,14 @@
                 {{ $comments->fragment('comments')->links() }}
             </div>
         </div>
+
+        @can('delete', $post)
+            <form action="{{ route('posts.destroy', $post) }}" method="post" class="mt-12">
+                @csrf
+                @method('DELETE')
+
+                <x-danger-button type="submit">Delete Post</x-danger-button>
+            </form>
+        @endcan
     </div>
 </x-app-layout>

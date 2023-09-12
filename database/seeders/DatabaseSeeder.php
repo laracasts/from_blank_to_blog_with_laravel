@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
          $user = \App\Models\User::factory()->create([
              'name' => 'Test User',
              'email' => 'test@example.com',
+             'is_author' => true,
          ]);
 
          Post::factory(30)->has(Comment::factory(15))->for($user)->create();

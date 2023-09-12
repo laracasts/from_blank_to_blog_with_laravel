@@ -33,4 +33,4 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::resource('posts', PostController::class);
-Route::middleware('auth')->resource('posts.comments', CommentController::class);
+Route::middleware(['auth', 'throttle:commenting'])->resource('posts.comments', CommentController::class)->only('store', 'destroy');

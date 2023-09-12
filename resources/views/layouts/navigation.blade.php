@@ -1,3 +1,4 @@
+@php use App\Models\Post; @endphp
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,6 +16,11 @@
                     <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.index')">
                         {{ __('Posts') }}
                     </x-nav-link>
+                    @can('create', Post::class)
+                        <x-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
+                            {{ __('New Post') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -77,9 +83,15 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+            <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.index')">
+                {{ __('Posts') }}
             </x-responsive-nav-link>
+
+            @can('create', Post::class)
+                <x-responsive-nav-link :href="route('posts.create')" :active="request()->routeIs('posts.create')">
+                    {{ __('New Post') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         @auth
